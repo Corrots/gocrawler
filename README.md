@@ -1,5 +1,5 @@
 # gocrawler
-crawler via golang
+crawler demo
 
 ## 单任务版爬虫
 ![simple-crawler-design](desgin/simple-crawler-design.png)
