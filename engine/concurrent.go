@@ -3,8 +3,13 @@ package engine
 import "fmt"
 
 type Scheduler interface {
+	ReadyNotifier
 	Register(Request)
-	ConfigureMasterWorkerChan(chan Request)
+	Run()
+}
+
+type ReadyNotifier interface {
+	WorkerReady(chan Request)
 }
 
 type ConcurrentEngine struct {
@@ -13,15 +18,15 @@ type ConcurrentEngine struct {
 }
 
 func (e *ConcurrentEngine) Run(seeds ...Request) {
-	for _, r := range seeds {
-		e.Scheduler.Register(r)
+	out := make(chan ParseResult)
+	// 执行创建Request chan和Worker chan等操作
+	e.Scheduler.Run()
+	for i := 0; i < e.WorkerCount; i++ {
+		e.createWorker(out, e.Scheduler)
 	}
 
-	in := make(chan Request)
-	out := make(chan ParseResult)
-	e.Scheduler.ConfigureMasterWorkerChan(in)
-	for i := 0; i < e.WorkerCount; i++ {
-		createWorker(in, out)
+	for _, r := range seeds {
+		e.Scheduler.Register(r)
 	}
 	// 从out_chan接收result
 	for {
@@ -36,9 +41,11 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 	}
 }
 
-func createWorker(in chan Request, out chan ParseResult) {
+func (e *ConcurrentEngine) createWorker(out chan ParseResult, notifier ReadyNotifier) {
+	in := make(chan Request)
 	go func() {
 		for {
+			notifier.WorkerReady(in)
 			r := <-in
 			result, err := worker(r)
 			if err != nil {
