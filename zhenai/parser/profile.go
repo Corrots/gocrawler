@@ -5,12 +5,11 @@ import (
 	"strconv"
 
 	"github.com/corrots/go-demo/gocrawler/engine"
-
 	"github.com/corrots/go-demo/gocrawler/schema"
 )
 
 var (
-	urlReg = regexp.MustCompile(`https://m.zhenai.com/u/(\d+).html`)
+	//urlReg = regexp.MustCompile(`https://m.zhenai.com/u/(\d+).html`)
 
 	genderReg    = regexp.MustCompile(`<span[^>]+>关注(\p{Han})</span>`)
 	marriageReg  = regexp.MustCompile(`<div [^>]*tag[^>]+>([未婚离异丧偶]+)</div>`)

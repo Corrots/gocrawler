@@ -1,6 +1,8 @@
 package engine
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Scheduler interface {
 	ReadyNotifier
@@ -33,12 +35,17 @@ func (e *ConcurrentEngine) Run(seeds ...Request) {
 		result := <-out
 		for _, item := range result.Items {
 			fmt.Printf("Got item: %+v\n", item)
+			itemSaver()
 		}
 		// result中的Request继续加入Request chan
 		for _, r := range result.Requests {
 			e.Scheduler.Register(r)
 		}
 	}
+}
+
+func itemSaver()  {
+	
 }
 
 func (e *ConcurrentEngine) createWorker(out chan ParseResult, notifier ReadyNotifier) {

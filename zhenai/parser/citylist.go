@@ -12,7 +12,7 @@ func ParseCityList(c []byte) engine.ParseResult {
 	re := regexp.MustCompile(cityListReg)
 	matches := re.FindAllSubmatch(c, -1)
 	var result engine.ParseResult
-	var limit = 2
+	limit := 3
 	for _, val := range matches {
 		//fmt.Printf("Got City: %s, URL: %s\n", fmt.Sprintf("%s", val[2]), val[1])
 		result.Requests = append(result.Requests, engine.Request{
@@ -25,6 +25,5 @@ func ParseCityList(c []byte) engine.ParseResult {
 		}
 		limit--
 	}
-	//fmt.Println(len(matches))
 	return result
 }
